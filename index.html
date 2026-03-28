@@ -3,161 +3,418 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ModelEngine Entity BB Plugin</title>
-  <meta name="description" content="A Blockbench plugin for creating ModelEngine entity models. Download and install in three steps.">
+  <title>ModelEngine Entity Plugin — Blockbench</title>
+  <meta name="description" content="A Blockbench plugin for creating ModelEngine entity models with bone behaviors, variants, hitboxes, and built-in validation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:             #07080A;
+      --surface:        #0D0F15;
+      --surface-2:      #111420;
+      --surface-hover:  #141822;
+      --border:         #191D2E;
+      --border-2:       #222740;
+      --accent:         #00E87A;
+      --accent-subtle:  rgba(0, 232, 122, 0.07);
+      --accent-glow:    rgba(0, 232, 122, 0.22);
+      --accent-glow-2:  rgba(0, 232, 122, 0.42);
+      --accent-dim:     rgba(0, 232, 122, 0.55);
+      --text-1:         #EDF0FA;
+      --text-2:         #727E9E;
+      --text-3:         #353D55;
+      --font-display:   'Bebas Neue', sans-serif;
+      --font-body:      'Syne', sans-serif;
+      --font-mono:      'JetBrains Mono', monospace;
+    }
+
+    html, body { min-height: 100%; }
 
     body {
-      background: #1a1a1a;
-      color: #e0e0e0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 70% 40% at 50% 0%, rgba(0, 232, 122, 0.055) 0%, transparent 65%),
+        radial-gradient(circle at 1px 1px, rgba(25, 29, 46, 0.9) 1px, transparent 0);
+      background-size: 100% 100%, 28px 28px;
+      color: var(--text-1);
+      font-family: var(--font-body);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      padding: 3rem 1.5rem;
     }
 
-    .container {
-      max-width: 520px;
+    /* ── CARD ─────────────────────────────────────── */
+    .card {
+      max-width: 560px;
       width: 100%;
-      text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.75rem;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+        0 48px 120px rgba(0, 0, 0, 0.55),
+        0 0 100px rgba(0, 232, 122, 0.025);
+      animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
-    h1 {
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: #ffffff;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.02em;
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    .subtitle {
-      color: #999;
-      font-size: 0.95rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .download-btn {
-      display: inline-block;
-      background: #4a9eff;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 0.75rem 2rem;
-      border-radius: 6px;
-      text-decoration: none;
-      transition: background 0.15s;
-      margin-bottom: 3rem;
-    }
-
-    .download-btn:hover { background: #3a8eef; }
-
-    .download-btn:focus-visible {
-      outline: 2px solid #4a9eff;
-      outline-offset: 3px;
-    }
-
-    .steps {
-      text-align: left;
-      border-top: 1px solid #2e2e2e;
-      padding-top: 2rem;
-    }
-
-    .steps h2 {
-      font-size: 0.75rem;
-      font-weight: 600;
+    /* ── BADGE ────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--accent-subtle);
+      border: 1px solid rgba(0, 232, 122, 0.14);
+      border-radius: 100px;
+      padding: 4px 13px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--accent);
+      letter-spacing: 0.07em;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #555;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.6rem;
+      opacity: 0;
+      animation: riseIn 0.6s 0.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .step {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      align-items: flex-start;
-    }
-
-    .step-num {
-      background: #2a2a2a;
-      color: #4a9eff;
-      font-size: 0.8rem;
-      font-weight: 700;
-      width: 24px;
-      height: 24px;
+    .badge-dot {
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      animation: blink 2.2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* ── TITLE ────────────────────────────────────── */
+    .title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 9vw, 4.2rem);
+      line-height: 0.92;
+      letter-spacing: 0.025em;
+      color: var(--text-1);
+      margin-bottom: 1.1rem;
+      opacity: 0;
+      animation: riseIn 0.6s 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .title-em { color: var(--accent); }
+
+    /* ── SUBTITLE ─────────────────────────────────── */
+    .subtitle {
+      font-size: 0.9rem;
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--text-2);
+      max-width: 400px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: riseIn 0.6s 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* ── FEATURE CHIPS ────────────────────────────── */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 2.25rem;
+      opacity: 0;
+      animation: riseIn 0.6s 0.27s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-3);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 3px 10px;
+      letter-spacing: 0.05em;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .chip:hover {
+      color: var(--text-2);
+      border-color: var(--border-2);
+    }
+
+    /* ── DOWNLOAD BUTTON ──────────────────────────── */
+    .download-btn {
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 9px;
+      width: 100%;
+      background: var(--accent);
+      color: #03100A;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.95rem 2rem;
+      border-radius: 10px;
+      text-decoration: none;
+      margin-bottom: 2.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 0 28px var(--accent-glow), 0 4px 16px rgba(0, 0, 0, 0.25);
+      opacity: 0;
+      animation: riseIn 0.6s 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .download-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 52px var(--accent-glow-2), 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .download-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 0 28px var(--accent-glow);
+    }
+
+    .download-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .btn-icon {
+      width: 17px;
+      height: 17px;
       flex-shrink: 0;
-      margin-top: 1px;
+    }
+
+    /* ── DIVIDER ──────────────────────────────────── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: riseIn 0.6s 0.37s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider-label {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--text-3);
+    }
+
+    /* ── STEPS ────────────────────────────────────── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .step {
+      position: relative;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--accent);
+      border-radius: 10px;
+      padding: 1rem 1.2rem 1rem 1.4rem;
+      overflow: hidden;
+      transition: background 0.2s, border-color 0.2s;
+      opacity: 0;
+    }
+
+    .step:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-2);
+      border-left-color: var(--accent);
+    }
+
+    .step:nth-child(1) { animation: riseIn 0.5s 0.40s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .step:nth-child(2) { animation: riseIn 0.5s 0.46s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .step:nth-child(3) { animation: riseIn 0.5s 0.52s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+    .step-num-bg {
+      position: absolute;
+      right: -4px;
+      bottom: -18px;
+      font-family: var(--font-display);
+      font-size: 6rem;
+      color: var(--text-1);
+      opacity: 0.025;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .step-tag {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--accent-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
     }
 
     .step-text {
-      font-size: 0.9rem;
-      line-height: 1.5;
-      color: #c0c0c0;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: var(--text-2);
+      position: relative;
+      z-index: 1;
     }
 
     code {
-      font-family: 'Cascadia Code', 'Fira Code', monospace;
-      background: #2a2a2a;
-      color: #e0e0e0;
-      padding: 0.1em 0.4em;
-      border-radius: 3px;
-      font-size: 0.85em;
+      font-family: var(--font-mono);
+      background: rgba(0, 232, 122, 0.07);
+      color: var(--accent);
+      border: 1px solid rgba(0, 232, 122, 0.13);
+      padding: 0.1em 0.45em;
+      border-radius: 4px;
+      font-size: 0.82em;
     }
 
+    /* ── FOOTER ───────────────────────────────────── */
     .footer {
-      margin-top: 2.5rem;
-      font-size: 0.8rem;
-      color: #444;
+      display: flex;
+      justify-content: center;
+      padding-top: 1.75rem;
+      border-top: 1px solid var(--border);
+      opacity: 0;
+      animation: riseIn 0.5s 0.58s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .footer a {
-      color: #888;
+    .footer-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      color: var(--text-3);
       text-decoration: none;
+      transition: color 0.2s;
     }
 
-    .footer a:hover { color: #888; }
+    .footer-link:hover { color: var(--text-2); }
 
-    .footer a:focus-visible {
-      outline: 2px solid #555;
-      outline-offset: 2px;
+    .footer-link svg {
+      width: 15px;
+      height: 15px;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+
+    .footer-link:hover svg { opacity: 0.85; }
+
+    .footer-link:focus-visible {
+      outline: 2px solid var(--border-2);
+      outline-offset: 3px;
+      border-radius: 3px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>ModelEngine Entity BB Plugin</h1>
-    <p class="subtitle">A Blockbench plugin for creating ModelEngine entity models.</p>
 
-    <a class="download-btn" href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/releases/latest/download/meg.js" download="meg.js" rel="noopener noreferrer">
+  <div class="card">
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Blockbench Plugin
+    </div>
+
+    <h1 class="title">ModelEngine<br><span class="title-em">Entity</span> Plugin</h1>
+
+    <p class="subtitle">Author ModelEngine entity models directly in Blockbench — bone behaviors, variants, hitboxes, and live validation, all in one tool.</p>
+
+    <div class="features">
+      <span class="chip">Bone Behaviors</span>
+      <span class="chip">Variants</span>
+      <span class="chip">Hitboxes</span>
+      <span class="chip">Validation</span>
+      <span class="chip">Shadow Bones</span>
+    </div>
+
+    <a class="download-btn"
+       href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/releases/latest/download/meg.js"
+       download="meg.js"
+       rel="noopener noreferrer">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
       Download meg.js
     </a>
 
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-label">Installation</span>
+      <div class="divider-line"></div>
+    </div>
+
     <div class="steps">
-      <h2>Install</h2>
       <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text">Download <code>meg.js</code> using the button above.</div>
+        <div class="step-num-bg">01</div>
+        <div class="step-tag">Step 01</div>
+        <p class="step-text">Download <code>meg.js</code> using the button above.</p>
       </div>
       <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text">Open Blockbench. Go to <code>File</code> → <code>Plugins</code> → <code>Load Plugin from File</code>.</div>
+        <div class="step-num-bg">02</div>
+        <div class="step-tag">Step 02</div>
+        <p class="step-text">Open Blockbench. Navigate to <code>File</code> → <code>Plugins</code> → <code>Load Plugin from File</code>.</p>
       </div>
       <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text">Select the downloaded <code>meg.js</code> file. The plugin will load immediately.</div>
+        <div class="step-num-bg">03</div>
+        <div class="step-tag">Step 03</div>
+        <p class="step-text">Select the downloaded <code>meg.js</code> file. The plugin loads immediately — no restart required.</p>
       </div>
     </div>
 
-    <div class="footer">
-      <a href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin" rel="noopener noreferrer">GitHub</a>
-    </div>
+    <footer class="footer">
+      <a class="footer-link" href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </footer>
+
   </div>
+
 </body>
 </html>
