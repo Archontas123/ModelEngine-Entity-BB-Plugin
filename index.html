@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ModelEngine Entity BB Plugin</title>
+  <meta name="description" content="A Blockbench plugin for creating ModelEngine entity models. Download and install in three steps.">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -33,7 +34,7 @@
     }
 
     .subtitle {
-      color: #888;
+      color: #999;
       font-size: 0.95rem;
       margin-bottom: 2.5rem;
     }
@@ -52,6 +53,11 @@
     }
 
     .download-btn:hover { background: #3a8eef; }
+
+    .download-btn:focus-visible {
+      outline: 2px solid #4a9eff;
+      outline-offset: 3px;
+    }
 
     .steps {
       text-align: left;
@@ -112,11 +118,16 @@
     }
 
     .footer a {
-      color: #555;
+      color: #888;
       text-decoration: none;
     }
 
     .footer a:hover { color: #888; }
+
+    .footer a:focus-visible {
+      outline: 2px solid #555;
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
@@ -124,7 +135,7 @@
     <h1>ModelEngine Entity BB Plugin</h1>
     <p class="subtitle">A Blockbench plugin for creating ModelEngine entity models.</p>
 
-    <a class="download-btn" href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/releases/latest/download/meg.js">
+    <a class="download-btn" href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/releases/latest/download/meg.js" download="meg.js" rel="noopener noreferrer">
       Download meg.js
     </a>
 
@@ -145,7 +156,7 @@
     </div>
 
     <div class="footer">
-      <a href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin">GitHub</a>
+      <a href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin" rel="noopener noreferrer">GitHub</a>
     </div>
   </div>
 </body>
