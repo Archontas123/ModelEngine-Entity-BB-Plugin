@@ -1,6 +1,6 @@
 # ModelEngine-Entity-BB-Plugin
 
-A Blockbench plugin for creatingModelEngine entity models.
+A Blockbench plugin for creating ModelEngine entity models.
 
 ## Install
 
