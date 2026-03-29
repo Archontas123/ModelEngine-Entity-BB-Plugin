@@ -1,5 +1,7 @@
 # ModelEngine-Entity-BB-Plugin
 
+> **Beta:** This plugin is currently in beta. Expect rough edges and please report any issues you encounter.
+
 A Blockbench plugin for creating ModelEngine entity models.
 
 ## Install
@@ -10,6 +12,17 @@ Or manually:
 1. Download [`meg.js`](https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/releases/latest/download/meg.js) from the latest release.
 2. Open Blockbench → `File` → `Plugins` → `Load Plugin from File`.
 3. Select `meg.js`.
+
+## Bug Reports
+
+Found a bug? Please report it so it can be fixed.
+
+- **GitHub Issues (preferred):** Open an issue at the [Issues page](https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/issues). Click **New Issue**, describe what happened, what you expected, and include any relevant steps to reproduce.
+- **Discord:** Message **_archontas** directly.
+
+When reporting a bug, including your Blockbench version and a description of the model/setup helps a lot.
+
+---
 
 ## Credits
 Original Model-Engine-BB-Plugin by Tixco & Pande.
