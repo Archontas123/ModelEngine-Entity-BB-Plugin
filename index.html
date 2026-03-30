@@ -7,273 +7,516 @@
     <meta name="description" content="Official Blockbench plugin for ModelEngine.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@300;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0e14;
-            --text: #a0a6b1;
-            --highlight: #ffffff;
-            --accent: #f7931e;
-            --code-bg: #161b22;
-            --font-main: 'Inter', sans-serif;
+            /* Kinetic Blueprint Color Palette */
+            --primary: #bbc6e2;
+            --primary-container: #1a1e2b;
+            --secondary: #c7fff0; /* Engine Energy */
+            --secondary-container: #1d2b26;
+            --on-secondary-container: #c7fff0;
+            
+            --surface: #121317; /* The Infinite Void */
+            --surface-container-lowest: #0a0b0e;
+            --surface-container-low: #1a1b20;
+            --surface-container-high: #292a2e;
+            --surface-container-highest: #36373d;
+            
+            --outline-variant: rgba(187, 198, 226, 0.15);
+            --shadow-color: rgba(187, 198, 226, 0.06);
+            
+            /* Typography */
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
+
+            --spacing-unit: 8px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
         body { 
-            background-color: var(--bg); 
-            color: var(--text); 
-            font-family: var(--font-main); 
+            background-color: var(--surface); 
+            color: var(--primary); 
+            font-family: var(--font-body); 
             line-height: 1.6; 
-            max-width: 680px; 
-            margin: 0 auto; 
-            padding: 4rem 2rem;
+            margin: 0;
+            overflow-x: hidden;
         }
 
-        header { margin-bottom: 6rem; }
+        /* Technical Editorialism Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        header { 
+            padding: 8rem 0 6rem 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+
         h1 { 
-            font-size: 3.5rem; 
-            font-weight: 900; 
-            color: var(--highlight); 
-            line-height: 1; 
+            font-family: var(--font-display);
+            font-size: clamp(3.5rem, 10vw, 6rem); 
+            font-weight: 300; 
+            color: var(--primary); 
+            line-height: 0.9; 
             letter-spacing: -0.04em;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
         }
-        h1 span { color: var(--accent); }
-        .subtitle { font-size: 1.25rem; font-weight: 400; color: var(--text); max-width: 500px; }
-
-        .btn-download {
-            display: inline-block;
-            margin-top: 2rem;
-            padding: 0.75rem 1.5rem;
-            background: var(--accent);
-            color: var(--bg);
-            text-decoration: none;
-            font-weight: 700;
-            border-radius: 4px;
-            transition: opacity 0.2s;
-        }
-        .btn-download:hover { opacity: 0.9; }
-
-        section { margin-bottom: 6rem; }
-        h2 { 
-            font-size: 0.8rem; 
-            text-transform: uppercase; 
-            letter-spacing: 0.2em; 
-            color: var(--accent); 
-            margin-bottom: 3rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 0.5rem;
-        }
-
-        .step { margin-bottom: 2rem; }
-        .step h3 { color: var(--highlight); font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .step p { font-size: 0.95rem; }
         
-        code { 
-            font-family: var(--font-mono); 
-            background: var(--code-bg); 
-            padding: 0.2rem 0.4rem; 
-            border-radius: 3px; 
-            color: var(--accent); 
-            font-size: 0.9em;
+        h1 span {
+            display: inline;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-left: 0.25rem;
         }
 
-        /* Documentation Blocks */
-        .feature-block {
-            margin-bottom: 5rem;
+        .subtitle { 
+            font-size: 1.25rem; 
+            font-weight: 400; 
+            color: var(--primary); 
+            max-width: 540px; 
+            opacity: 0.8;
+            margin-bottom: 3rem;
         }
 
-        .feature-block h3 {
-            font-size: 1.3rem;
-            color: var(--highlight);
-            margin-bottom: 1.25rem;
-            letter-spacing: -0.01em;
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            font-family: var(--font-display);
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-radius: 4px;
         }
 
-        .feature-block p {
-            margin-bottom: 1.25rem;
-            font-size: 0.95rem;
+        .btn-primary {
+            background: var(--secondary-container);
+            color: var(--on-secondary-container);
         }
 
-        .feature-block ul {
-            list-style: none;
+        .btn-primary:hover {
+            box-shadow: 0 0 20px rgba(199, 255, 240, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--primary-container);
+            color: var(--primary);
+            margin-left: 1rem;
+        }
+
+        /* Sectioning with Tonal Layering */
+        section {
+            padding: 3rem 0;
+            margin-bottom: 0;
+        }
+
+        .section-recess {
+            background-color: var(--surface-container-low);
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            padding: 4rem 0;
+        }
+
+        h2 {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h2::after {
+            content: "";
+            height: 1px;
+            flex-grow: 1;
+            background: var(--outline-variant);
+        }
+
+        /* Feature Grid & Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--surface-container-low);
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            background-color: var(--surface-container-highest);
+            transform: translateY(-4px);
+            box-shadow: 0 32px 64px var(--shadow-color);
+        }
+
+        .card h3 { 
+            font-family: var(--font-display);
+            color: var(--primary); 
+            font-size: 1.5rem; 
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .card p { 
+            font-size: 0.95rem; 
+            opacity: 0.7;
             margin-bottom: 1.5rem;
         }
 
-        .feature-block li {
+        /* Metadata Tags */
+        .meta-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Viewport Frame Aesthetic */
+        .viewport-frame {
+            background-color: var(--surface-container-lowest);
+            border: 1px solid var(--outline-variant);
             position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            min-height: 200px;
         }
 
-        .feature-block li::before {
-            content: "→";
+        .viewport-frame::before {
+            content: "";
             position: absolute;
-            left: 0;
-            color: var(--accent);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(var(--outline-variant) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.2;
+            pointer-events: none;
         }
 
+        /* Technical Tables */
         .tech-table {
             width: 100%;
             border-collapse: collapse;
             margin: 1.5rem 0;
-            font-size: 0.8rem;
-            background: rgba(255,255,255,0.02);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .tech-table th, .tech-table td {
-            padding: 0.75rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .tech-table th {
-            background: rgba(255,255,255,0.05);
-            color: var(--highlight);
-            text-transform: uppercase;
-            font-size: 0.65rem;
-            letter-spacing: 0.1em;
-        }
-
-        .badge {
-            font-family: var(--font-mono);
-            background: var(--code-bg);
-            padding: 0.1rem 0.4rem;
-            border-radius: 3px;
-            color: var(--accent);
-            font-size: 0.85em;
-        }
-
-        .warning-box {
-            background: rgba(247, 147, 30, 0.05);
-            border-left: 3px solid var(--accent);
-            padding: 0.75rem 1.25rem;
-            margin: 1.5rem 0;
             font-size: 0.85rem;
         }
 
+        .tech-table th {
+            text-align: left;
+            padding: 1rem;
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--secondary);
+            background: var(--surface-container-high);
+        }
+
+        .tech-table td {
+            padding: 1rem;
+            background: var(--surface-container-low);
+            border-bottom: 1px solid var(--outline-variant);
+        }
+
+        /* List Styling */
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--outline-variant);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .feature-list li::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background: var(--secondary);
+            border-radius: 50%;
+        }
+
+        /* Chips */
+        .badge {
+            font-family: var(--font-mono);
+            background: var(--primary-container);
+            padding: 0.2rem 0.5rem;
+            border-radius: 2px;
+            color: var(--primary);
+            font-size: 0.8em;
+        }
+
+        .warning-box {
+            background: var(--surface-container-high);
+            border-left: 2px solid var(--secondary);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
         footer { 
-            margin-top: 8rem; 
-            padding-top: 2rem; 
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 6rem 0;
+            border-top: 1px solid var(--outline-variant);
+            font-family: var(--font-display);
             font-size: 0.8rem;
             display: flex;
-            gap: 1.5rem;
+            gap: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
-        footer a { color: var(--text); text-decoration: none; border-bottom: 1px solid transparent; }
-        footer a:hover { color: var(--highlight); border-bottom-color: var(--highlight); }
+        
+        footer a { 
+            color: var(--primary); 
+            text-decoration: none; 
+            transition: color 0.2s;
+        }
+        
+        footer a:hover { 
+            color: var(--secondary);
+        }
 
-        @media (max-width: 600px) {
-            h1 { font-size: 2.5rem; }
-            body { padding: 2rem 1.5rem; }
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            h1 span { margin-left: 0; }
+            .grid { grid-template-columns: 1fr; }
+            header::after { width: 100%; right: 0; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>MODELENGINE<span>.BB</span></h1>
-        <p class="subtitle">The definitive Blockbench plugin for ModelEngine entity creation. Bone behaviors, variants, and live validation.</p>
-        <a href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/releases/latest/download/meg.js" class="btn-download">Download meg.js</a>
-    </header>
-
-    <section id="installation">
-        <h2>Installation</h2>
-        <div class="step">
-            <h3>01. Download</h3>
-            <p>Grab the latest <code>meg.js</code> from the button above or the GitHub releases page.</p>
-        </div>
-        <div class="step">
-            <h3>02. Load</h3>
-            <p>In Blockbench, navigate to <code>File</code> → <code>Plugins</code> → <code>Load Plugin from File</code>.</p>
-        </div>
-        <div class="step">
-            <h3>03. Setup</h3>
-            <p>Select the downloaded file. The ModelEngine toolbar will appear automatically in your workspace.</p>
-        </div>
-    </section>
-
-    <section id="features">
-        <h2>Plugin Documentation</h2>
-        
-        <div class="feature-block">
-            <h3>MEG Entity Format</h3>
-            <p>A dedicated Blockbench format for ModelEngine entity authoring. Create a new project and select <strong>MEG Entity</strong>, or convert an existing Generic project via <strong>File > Convert Project</strong>.</p>
-            <div class="warning-box">
-                All plugin tools are scoped to this format and will not appear or function in other formats.
+    <div class="container">
+        <header>
+            <span class="meta-tag">Plugin v0.1.0-beta</span>
+            <h1>MODELENGINE<span>.BB</span></h1>
+            <p class="subtitle">The definitive Blockbench plugin for ModelEngine entity creation. Bone behaviors, variants, and live validation.</p>
+            <div class="actions">
+                <a href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/releases/latest/download/meg.js" class="btn btn-primary">Download meg.js</a>
             </div>
-        </div>
+        </header>
 
-        <div class="feature-block">
-            <h3>MEG Entity Settings</h3>
-            <p>Accessible via <strong>Edit > MEG Entity Settings</strong>. Stores per-project metadata used for resource pack export.</p>
-            <table class="tech-table">
-                <thead>
-                    <tr><th>Field</th><th>Description</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Namespace</td><td>Minecraft resource namespace (e.g. <span class="badge">mypack</span>)</td></tr>
-                    <tr><td>Texture Folder</td><td>Subfolder for textures (e.g. <span class="badge">entity/mymod</span>)</td></tr>
-                    <tr><td>Model ID</td><td>Resource path ID for the model</td></tr>
-                    <tr><td>Mythic Mob ID</td><td>MythicMobs mob identifier</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <section id="installation">
+            <h2>01 / Installation</h2>
+            <div class="grid">
+                <div class="card">
+                    <span class="meta-tag">Step 01</span>
+                    <h3>Download</h3>
+                    <p>Grab the latest <code>meg.js</code> from the GitHub releases page to begin the integration.</p>
+                </div>
+                <div class="card">
+                    <span class="meta-tag">Step 02</span>
+                    <h3>Load</h3>
+                    <p>In Blockbench, navigate to <code>File</code> → <code>Plugins</code> → <code>Load Plugin from File</code>.</p>
+                </div>
+                <div class="card">
+                    <span class="meta-tag">Step 03</span>
+                    <h3>Setup</h3>
+                    <p>Select the downloaded file. The ModelEngine toolbar will appear automatically in your workspace.</p>
+                </div>
+            </div>
+        </section>
+    </div>
 
-        <div class="feature-block">
-            <h3>Validation (Error Scanner)</h3>
-            <p>Open via the <strong>MEG Validate</strong> button in the left sidebar, or press <span class="badge">Y</span>.</p>
-            <ul>
-                <li><strong>Cube Errors:</strong> Checks for elements exceeding the 112px axis limit.</li>
-                <li><strong>Bone Errors:</strong> Validates combined bounding boxes of bone groups.</li>
-                <li><strong>Project Warnings:</strong> Scans for missing hitboxes, meshes, and incompatible texture animations.</li>
-            </ul>
-        </div>
+    <div class="section-recess">
+        <div class="container">
+            <section id="features">
+                <h2>02 / Plugin Documentation</h2>
 
-        <div class="feature-block">
-            <h3>Bone Behaviors</h3>
-            <p>Right-click any bone group and select <strong>Add Bone Behavior</strong> to apply ModelEngine prefixes.</p>
-            <table class="tech-table">
-                <thead>
-                    <tr><th>Behavior</th><th>Prefix</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Head / Inherited</td><td><span class="badge">h_</span> / <span class="badge">hi_</span></td></tr>
-                    <tr><td>Seat / Leash</td><td><span class="badge">p_</span> / <span class="badge">l_</span></td></tr>
-                    <tr><td>Nametag</td><td><span class="badge">tag_</span></td></tr>
-                    <tr><td>IK Segment / Tail</td><td><span class="badge">seg_</span> / <span class="badge">tl_</span></td></tr>
-                    <tr><td>AABB / OBB Hitbox</td><td><span class="badge">b_</span> / <span class="badge">ob_</span></td></tr>
-                </tbody>
-            </table>
-        </div>
+                <!-- MEG Entity Format -->
+                <div class="grid">
+                    <div class="card" style="grid-column: span 2;">
+                        <span class="meta-tag">Core Format</span>
+                        <h3>MEG Entity Format</h3>
+                        <p>A dedicated Blockbench format for ModelEngine entity authoring. Create a new project and select <strong>MEG Entity</strong>, or convert an existing Generic project via <strong>File > Convert Project</strong>.</p>
+                        <div class="warning-box">
+                            All plugin tools are scoped to this format and will not appear or function in other formats. This plugin is currently in <strong>beta</strong> — expect rough edges and please report any issues you encounter.
+                        </div>
+                    </div>
+                </div>
 
-        <div class="feature-block">
-            <h3>Variant System</h3>
-            <p>Define multiple visual states for a single model. Use the toolbar dropdown to manage visibility states for "Variant Bones".</p>
-            <ul>
-                <li>Create, rename, and remove variants dynamically.</li>
-                <li><strong>Set View as Variant:</strong> Saves the current bone visibility to the active variant.</li>
-                <li><strong>Default View:</strong> Quickly resets to show only non-variant bones.</li>
-            </ul>
-        </div>
+                <!-- MEG Entity Settings -->
+                <div class="viewport-frame" style="margin-top: 2rem;">
+                    <span class="meta-tag">Metadata Configuration</span>
+                    <h3>MEG Entity Settings</h3>
+                    <p style="margin-bottom: 2rem;">Accessible via <strong>Edit > MEG Entity Settings</strong>. Stores per-project metadata used for resource pack export.</p>
+                    <table class="tech-table">
+                        <thead>
+                            <tr><th>Field</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Resource Namespace</td><td>Minecraft resource namespace (e.g. <span class="badge">mypack</span>)</td></tr>
+                            <tr><td>Texture Folder</td><td>Subfolder for textures (e.g. <span class="badge">entity/mymod</span>)</td></tr>
+                            <tr><td>Model ID</td><td>Resource path ID for the model</td></tr>
+                            <tr><td>Mythic Mob ID</td><td>MythicMobs mob identifier</td></tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.75;">Enabling <strong>Apply Namespace/Folder To Existing Textures</strong> will update all loaded textures immediately. New textures created via Blockbench's texture generator automatically inherit the current namespace and folder.</p>
+                </div>
 
-        <div class="feature-block">
-            <h3>Quick Tools</h3>
-            <p>Found in <strong>Add Element</strong> menu for rapid setup of essential components.</p>
-            <ul>
-                <li><strong>Add Hitbox:</strong> Creates a standard 8x32x8 hidden hitbox bone.</li>
-                <li><strong>Add Shadow:</strong> Creates a standard 16x0x16 shadow bone.</li>
-            </ul>
-        </div>
-    </section>
+                <!-- Validation -->
+                <div class="grid" style="margin-top: 2rem;">
+                    <div class="card" style="grid-column: span 2;">
+                        <span class="meta-tag">Validation</span>
+                        <h3>Error Scanner</h3>
+                        <p style="margin-bottom: 1.5rem;">Open via the <strong>MEG Validate</strong> button in the left sidebar (Edit mode only), <strong>Edit > Show Error List</strong>, or press <span class="badge">Y</span>. Clicking <strong>See cube</strong> or <strong>See bone</strong> selects that element and closes the dialog.</p>
+                        <div class="grid" style="grid-template-columns: 1fr 1fr 2fr; gap: 1.5rem;">
+                            <div>
+                                <p class="meta-tag" style="margin-bottom: 0.75rem;">Cube Errors</p>
+                                <ul class="feature-list">
+                                    <li>Oversized cube — any axis exceeds 112px</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="meta-tag" style="margin-bottom: 0.75rem;">Bone Errors</p>
+                                <ul class="feature-list">
+                                    <li>Combined bounding box of all cube children exceeds 112px on any axis</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="meta-tag" style="margin-bottom: 0.75rem;">Project Warnings</p>
+                                <ul class="feature-list">
+                                    <li>Multiple or missing <span class="badge">hitbox</span> bone</li>
+                                    <li>Hitbox X/Z sizes differ (MEG uses the larger for both)</li>
+                                    <li>Hitbox exceeds Minecraft limits (1024×1024×1024px / 64 blocks)</li>
+                                    <li>Missing hitbox cube</li>
+                                    <li>Multiple or missing <span class="badge">shadow</span> bone</li>
+                                    <li>Missing shadow cube</li>
+                                    <li>Mesh elements present (MEG Entity is cube-only)</li>
+                                    <li>No textures loaded</li>
+                                    <li>Textures using mcmeta/flipbook animation (use texture index shuffling for MEG instead)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <footer>
-        <a href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin">GitHub</a>
-        <a href="https://blockbench.net">Blockbench</a>
-        <a href="https://mythiccraft.io">Model Engine</a>
-    </footer>
+                <!-- Bone Behaviors -->
+                <div class="grid" style="margin-top: 2rem;">
+                    <div class="card" style="grid-column: span 2;">
+                        <span class="meta-tag">Automated Prefixing</span>
+                        <h3>Bone Behaviors</h3>
+                        <p style="margin-bottom: 1.5rem;">Right-click any bone group and select <strong>Add Bone Behavior</strong>. Applies a ModelEngine prefix to the bone name. <strong>Replace Existing Known Behavior Prefix</strong> strips any existing MEG prefix before applying the new one.</p>
+                        <table class="tech-table">
+                            <thead>
+                                <tr><th>Behavior</th><th>Prefix</th><th>Requires Cube-less</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Head</td><td><span class="badge">h_</span></td><td>No</td></tr>
+                                <tr><td>Inherited Head</td><td><span class="badge">hi_</span></td><td>No</td></tr>
+                                <tr><td>Leash</td><td><span class="badge">l_</span></td><td>Yes</td></tr>
+                                <tr><td>Seat</td><td><span class="badge">p_</span></td><td>Yes</td></tr>
+                                <tr><td>Item Head Display</td><td><span class="badge">ih_</span></td><td>Yes</td></tr>
+                                <tr><td>Item Main Hand Display</td><td><span class="badge">ir_</span></td><td>Yes</td></tr>
+                                <tr><td>Item Offhand Display</td><td><span class="badge">il_</span></td><td>Yes</td></tr>
+                                <tr><td>Ghost</td><td><span class="badge">g_</span></td><td>Yes</td></tr>
+                                <tr><td>Nametag</td><td><span class="badge">tag_</span></td><td>Yes</td></tr>
+                                <tr><td>IK Segment</td><td><span class="badge">seg_</span></td><td>Yes</td></tr>
+                                <tr><td>IK Tail</td><td><span class="badge">tl_</span></td><td>Yes</td></tr>
+                                <tr><td>AABB Hitbox</td><td><span class="badge">b_</span></td><td>No</td></tr>
+                                <tr><td>OBB Hitbox</td><td><span class="badge">ob_</span></td><td>No</td></tr>
+                                <tr><td>Player Limb Head</td><td><span class="badge">phead_</span></td><td>Yes</td></tr>
+                                <tr><td>Player Limb Right Arm</td><td><span class="badge">prarm_</span></td><td>Yes</td></tr>
+                                <tr><td>Player Limb Left Arm</td><td><span class="badge">plarm_</span></td><td>Yes</td></tr>
+                                <tr><td>Player Limb Body</td><td><span class="badge">pbody_</span></td><td>Yes</td></tr>
+                                <tr><td>Player Limb Right Leg</td><td><span class="badge">prleg_</span></td><td>Yes</td></tr>
+                                <tr><td>Player Limb Left Leg</td><td><span class="badge">plleg_</span></td><td>Yes</td></tr>
+                                <tr><td>Mount ID</td><td><span class="badge">mount</span></td><td>Yes</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bone Options + Quick Tools -->
+                <div class="grid" style="margin-top: 2rem; grid-template-columns: 1fr 1fr;">
+                    <div class="card">
+                        <span class="meta-tag">Bone Configuration</span>
+                        <h3>Bone Options</h3>
+                        <p style="margin-bottom: 1.5rem;">Right-click any bone group and select <strong>Bone Options</strong>.</p>
+                        <ul class="feature-list">
+                            <li><strong>Is Variant Bone</strong> — marks the bone as a variant-only bone, hiding it in the Default view</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <span class="meta-tag">Workflow</span>
+                        <h3>Quick Tools</h3>
+                        <p style="margin-bottom: 1.5rem;">Found in <strong>Add Element</strong> menu. Running either action when the bone already exists updates it to defaults rather than duplicating.</p>
+                        <ul class="feature-list">
+                            <li><strong>Add Hitbox</strong> — creates or updates a bone named <span class="badge">hitbox</span> with a default 8×32×8 cube (pivot Y = 28). Hidden by default.</li>
+                            <li><strong>Add Shadow</strong> — creates or updates a bone named <span class="badge">shadow</span> with a default 16×0×16 cube.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Variant System (full width) -->
+                <div class="grid" style="margin-top: 2rem; grid-template-columns: 1fr;">
+                    <div class="card">
+                        <span class="meta-tag">State Management</span>
+                        <h3>Variant System</h3>
+                        <p style="margin-bottom: 1.5rem;">The variant selector dropdown appears in the toolbar. Variants define which sub-bones are visible for a given model state. Default bones contain child bones marked as variant bones; each variant records which of those children are visible.</p>
+                        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div>
+                                <p class="meta-tag" style="margin-bottom: 0.75rem;">Actions</p>
+                                <ul class="feature-list">
+                                    <li><strong>Create Variant</strong> — prompts for a name and adds a new variant</li>
+                                    <li><strong>Remove Variant</strong> — deletes the currently selected variant</li>
+                                    <li><strong>Rename Current Variant</strong> — renames the selected variant</li>
+                                    <li><strong>Set View as Variant</strong> — saves current bone visibility to the active variant</li>
+                                    <li><strong>View Current Variant</strong> — applies the stored visibility for the active variant</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="meta-tag" style="margin-bottom: 0.75rem;">Selector Options</p>
+                                <ul class="feature-list">
+                                    <li><strong>All</strong> — makes all bones visible</li>
+                                    <li><strong>Default</strong> — shows only non-variant bones</li>
+                                    <li><strong>Named variants</strong> — applies saved bone visibility for that variant</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="container">
+        <footer>
+            <a href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin">GitHub</a>
+            <a href="https://blockbench.net">Blockbench</a>
+            <a href="https://mythiccraft.io">Model Engine</a>
+            <span style="margin-left: auto; opacity: 0.5;">ModelEngine BB // Kinetic Blueprint v1.0</span>
+        </footer>
+    </div>
 </body>
 </html>
