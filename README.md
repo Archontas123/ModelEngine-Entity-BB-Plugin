@@ -1,8 +1,16 @@
-# ModelEngine-Entity-BB-Plugin
-
-> **Beta:** This plugin is currently in beta. Expect rough edges and please report any issues you encounter.
-
-A Blockbench plugin for creating ModelEngine entity models.
+<div align="center">
+  <h1>ModelEngine Entity BB Plugin</h1>
+  <p><em>Blockbench plugin for ModelEngine entity authoring</em></p>
+  <p>
+    <img src="https://img.shields.io/badge/status-beta-orange?style=flat-square" alt="Beta">
+    <img src="https://img.shields.io/badge/platform-Blockbench-blue?style=flat-square" alt="Blockbench">
+    <img src="https://img.shields.io/badge/license-MIT-white?style=flat-square" alt="MIT License">
+    <a href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/releases/latest"><img src="https://img.shields.io/github/v/release/Archontas123/ModelEngine-Entity-BB-Plugin?style=flat-square" alt="Latest Release"></a>
+    <a href="https://github.com/Archontas123/ModelEngine-Entity-BB-Plugin/issues"><img src="https://img.shields.io/github/issues/Archontas123/ModelEngine-Entity-BB-Plugin?style=flat-square" alt="Issues"></a>
+    <img src="https://img.shields.io/github/last-commit/Archontas123/ModelEngine-Entity-BB-Plugin?style=flat-square" alt="Last Commit">
+  </p>
+  <blockquote><strong>Beta:</strong> This plugin is currently in beta. Expect rough edges and please report any issues you encounter.</blockquote>
+</div>
 
 ## Install
 
