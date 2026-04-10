@@ -276,13 +276,46 @@
             font-size: 0.8em;
         }
 
+        .centered-section > .meta-tag,
+        .centered-section > h3,
+        .centered-section > p {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .centered-section > p {
+            max-width: 72ch;
+        }
+
         .warning-box {
-            background: var(--surface-container-high);
-            border-left: 2px solid var(--secondary);
-            padding: 1.5rem;
-            margin: 2rem 0;
-            font-size: 0.9rem;
-            font-style: italic;
+            background: linear-gradient(135deg, rgba(255, 164, 74, 0.16), rgba(255, 164, 74, 0.05));
+            border: 1px solid rgba(255, 164, 74, 0.55);
+            border-radius: 6px;
+            padding: 1.25rem 1.5rem 1.2rem;
+            margin: 2rem 0 0;
+            font-size: 0.92rem;
+            font-style: normal;
+            color: #ffe7c2;
+        }
+
+        .warning-box::before {
+            content: "Warning";
+            display: inline-block;
+            margin-bottom: 0.6rem;
+            padding: 0.1rem 0.55rem;
+            border-radius: 999px;
+            font-family: var(--font-display);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            background: rgba(255, 164, 74, 0.25);
+            color: #ffd39a;
+        }
+
+        .warning-box strong {
+            color: #fff2dd;
         }
 
         footer { 
@@ -358,7 +391,7 @@
                         <span class="meta-tag">Core Format</span>
                         <h3>MEG Entity Format</h3>
                         <p>A dedicated Blockbench format for ModelEngine entity authoring. Create a new project and select <strong>MEG Entity</strong>, or convert an existing Generic project via <strong>File > Convert Project</strong>.</p>
-                        <div class="warning-box">
+                        <div class="warning-box" role="alert">
                             All plugin tools are scoped to this format and will not appear or function in other formats. This plugin is currently in <strong>beta</strong> — expect rough edges and please report any issues you encounter.
                         </div>
                     </div>
@@ -385,7 +418,7 @@
 
                 <!-- Validation -->
                 <div class="grid" style="margin-top: 2rem;">
-                    <div class="card" style="grid-column: span 2;">
+                    <div class="card centered-section" style="grid-column: span 2;">
                         <span class="meta-tag">Validation</span>
                         <h3>Error Scanner</h3>
                         <p style="margin-bottom: 1.5rem;">Open via the <strong>MEG Validate</strong> button in the left sidebar (Edit mode only), <strong>Edit > Show Error List</strong>, or press <span class="badge">Y</span>. Clicking <strong>See cube</strong> or <strong>See bone</strong> selects that element and closes the dialog.</p>
@@ -422,7 +455,7 @@
 
                 <!-- Bone Behaviors -->
                 <div class="grid" style="margin-top: 2rem;">
-                    <div class="card" style="grid-column: span 2;">
+                    <div class="card centered-section" style="grid-column: span 2;">
                         <span class="meta-tag">Automated Prefixing</span>
                         <h3>Bone Behaviors</h3>
                         <p style="margin-bottom: 1.5rem;">Right-click any bone group and select <strong>Add Bone Behavior</strong>. Applies a ModelEngine prefix to the bone name. <strong>Replace Existing Known Behavior Prefix</strong> strips any existing MEG prefix before applying the new one.</p>
