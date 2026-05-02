@@ -394,7 +394,6 @@ function installMegAddElementMenuAction() {
 		return;
 	}
 
-	// Cleanup legacy single-action entry if present.
 	if (addElementMenu.structure.indexOf('meg_apply_structure_defaults') !== -1) {
 		addElementMenu.removeAction('meg_apply_structure_defaults');
 	}
@@ -582,21 +581,28 @@ function generateMegEntityActions() {
 	MenuBar.addAction(megSettingsAction, 'edit');
 	installMegAddElementMenuAction();
 }
-
+/*
+ * ModelEngine-Entity-BB-Plugin
+ * Copyright (C) 2026 ModelEngine-Entity-BB-Plugin contributors
+ * SPDX-License-Identifier: GPL-3.0-only
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ */
 var maxSize = 112;
-var coolRotations = [-45, -22.5, 0, 22.5, 45];
 
 var text_noErrors = 'No errors found!';
 var text_cubeButton = 'See cube';
 var text_boneButton = 'See bone';
-var text_quickFix = 'Quick fix [_]';
 var text_projectWarnings = 'Project warnings';
 
 var codeViewDialog;
-
-const mathDiff = (a, b) => {
-	return Math.abs(a - b);
-};
 
 var errorListAction;
 
@@ -620,7 +626,6 @@ function displayErrorList() {
 	}
 
 	let templateHTML = '';
-	let quickFixableErrors = false;
 	let warnings = getMegProjectWarnings();
 
 	if (warnings.length > 0) {
@@ -648,35 +653,15 @@ function displayErrorList() {
 		if (cubeErrors.length > 0) {
 			let parentName = typeof cube.parent === 'string' ? cube.parent : cube.parent.name;
 			let errorList = '';
-			let entryButton = `<button @click="fixCube('${cube.uuid}', 'orientation', 'newVal')" style="height:10%;width=10%">${text_quickFix}</button>`;
 			cubeErrors.forEach(error => {
-				let button = '';
-				let errorNumber = error.substring(error.indexOf('[') + 1, error.lastIndexOf(']'));
-				if (error.includes('rotation')) {
-					let targetNumber = 0;
-					coolRotations.forEach(rotation => {
-						if (mathDiff(errorNumber, rotation) < 2.5 && mathDiff(errorNumber, rotation) > 0) {
-							quickFixableErrors = true;
-
-							targetNumber = rotation;
-							let orientation = error.split(' ')[1];
-							button = entryButton;
-							button = button.replace('_', targetNumber).replace('orientation', orientation).replace('newVal', targetNumber);
-						}
-					});
-				}
-				if (!coolRotations.includes(parseFloat(errorNumber))) {
-					errorList += `<li>- ${error} ${button}</li>`;
-				}
+				errorList += `<li>- ${error}</li>`;
 			});
-			if (errorList.length !== 0) {
-				templateHTML += `
-					<span style="font-size:18px"><span style="color:DodgerBlue">${parentName}</span>.<span style="color:Tomato">${cube.name}</span>:</span>
-					<button @click="clickCube('${cube.uuid}')" style="float: right">${text_cubeButton}</button>
-					<ul>${errorList}</ul>
-					<hr>
-				`;
-			}
+			templateHTML += `
+				<span style="font-size:18px"><span style="color:DodgerBlue">${parentName}</span>.<span style="color:Tomato">${cube.name}</span>:</span>
+				<button @click="clickCube('${cube.uuid}')" style="float: right">${text_cubeButton}</button>
+				<ul>${errorList}</ul>
+				<hr>
+			`;
 		}
 	});
 
@@ -702,20 +687,6 @@ function displayErrorList() {
 
 	let result = templateHTML ? templateHTML : '<h3>' + text_noErrors + '</h3>';
 
-	function quickFixCube(uuid, orientation, fix) {
-		let cube = getCubeByUUID(uuid);
-		if (cube !== null) {
-			if (orientation === 'X') {
-				cube.rotation[0] = fix;
-			} else if (orientation === 'Y') {
-				cube.rotation[1] = fix;
-			} else {
-				cube.rotation[2] = fix;
-			}
-			Blockbench.showQuickMessage('Fixed cube by ID ' + uuid, 4000);
-		}
-	}
-
 	codeViewDialog = new Dialog({
 		title: 'MEG Entity Validation',
 		id: 'errors_menu',
@@ -724,9 +695,6 @@ function displayErrorList() {
 		singleButton: true,
 		component: {
 			methods: {
-				fixCube(uuid, orientation, fix) {
-					quickFixCube(uuid, orientation, fix);
-				},
 				clickCube(uuid) {
 					let cube = getCubeByUUID(uuid);
 					if (cube !== null) {
@@ -753,39 +721,6 @@ function displayErrorList() {
 			template: `<div>${result}</div>`
 		}
 	}).show();
-
-	if (quickFixableErrors) {
-		let quickFixButton = $('<button class="confirm_btn cancel_btn" style="margin:5px;">Quick fix all rotation errors</button>');
-
-		quickFixButton.click(function() {
-			Outliner.elements.forEach(cube => {
-				if (!cube || cube.type !== 'cube') {
-					return;
-				}
-				if (typeof cube.parent !== 'string' && cube.parent && cube.parent.name && isMegStructureBoneName(cube.parent.name)) {
-					return;
-				}
-				let cubeErrors = getCubeErrors(cube);
-				if (cubeErrors.length > 0) {
-					cubeErrors.forEach(error => {
-						let errorNumber = error.substring(error.indexOf('[') + 1, error.lastIndexOf(']'));
-						if (error.includes('rotation')) {
-							let targetNumber = 0;
-							coolRotations.forEach(rotation => {
-								if (mathDiff(errorNumber, rotation) < 2.5 && mathDiff(errorNumber, rotation) > 0) {
-									targetNumber = rotation;
-									let orientation = error.split(' ')[1];
-									quickFixCube(cube.uuid, orientation, targetNumber);
-								}
-							});
-						}
-					});
-				}
-			});
-		});
-
-		$('div.dialog_bar.button_bar').prepend(quickFixButton);
-	}
 }
 
 function getMegProjectWarnings() {
@@ -915,9 +850,6 @@ function getCubeErrors(cube) {
 	let y = cube.to[1] - cube.from[1];
 	let z = cube.to[2] - cube.from[2];
 
-	if (!coolRotations.includes(cube.rotation[0])) errorList.push('Illegal X rotation [' + cube.rotation[0] + ']');
-	if (!coolRotations.includes(cube.rotation[1])) errorList.push('Illegal Y rotation [' + cube.rotation[1] + ']');
-	if (!coolRotations.includes(cube.rotation[2])) errorList.push('Illegal Z rotation [' + cube.rotation[2] + ']');
 	if (x > maxSize) errorList.push('X size must be lower than ' + maxSize + ' [' + x + ']');
 	if (y > maxSize) errorList.push('Y size must be lower than ' + maxSize + ' [' + y + ']');
 	if (z > maxSize) errorList.push('Z size must be lower than ' + maxSize + ' [' + z + ']');
@@ -943,7 +875,20 @@ function getBoneByUUID(uuid) {
 	});
 	return result;
 }
-
+/*
+ * ModelEngine-Entity-BB-Plugin
+ * Copyright (C) 2026 ModelEngine-Entity-BB-Plugin contributors
+ * SPDX-License-Identifier: GPL-3.0-only
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ */
 var boneOptions = {};
 
 var boneOptionAction;
@@ -1044,7 +989,6 @@ function generateBoneAction() {
 		icon: 'fas.fa-cogs',
 		category: 'edit',
 		condition: {formats: [MEG_ENTITY_FORMAT_ID]},
-		//keybind: new Keybind({key: 113}), // Do we want to have a keybind?
 		click: function () {
 			if (!Group.selected) {
 				Blockbench.showQuickMessage('Select a bone group first.', 2500);
@@ -1136,7 +1080,20 @@ function setBoneTypeMenu(){
 
 	return boneTypeDialog;
 }
-
+/*
+ * ModelEngine-Entity-BB-Plugin
+ * Copyright (C) 2026 ModelEngine-Entity-BB-Plugin contributors
+ * SPDX-License-Identifier: GPL-3.0-only
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ */
 var selectVariant;
 var createVariant;
 var deleteVariant;
@@ -1245,13 +1202,13 @@ function generateVariantActions() {
 			let variantSettings = [];
 			Group.all.forEach(element => {
 
-				if(!isBoneDefault(element.uuid)) // Don't loop through variant bones.
+				if(!isBoneDefault(element.uuid))
 					return;
-
+				
 				element.children.every(group => {
-					if(group.type === 'group' && !isBoneDefault(group.uuid) && group.visibility) { // Isolate variant bones.
+					if(group.type === 'group' && !isBoneDefault(group.uuid) && group.visibility) { 
 						variantSettings.push(group.uuid);
-						return false; // Immediately break out of loop so it only selects 1 variant bone.
+						return false; 
 					}
 					return true;
 				});
@@ -1287,8 +1244,8 @@ function removeOption(key) {
 
 function showCreateVariantWindow() {
 	Blockbench.textPrompt(
-		'',
-		'New Variant',
+		'', 
+		'New Variant', 
 		function(text) {
 			let key = text.toLowerCase().replace(/ /g, '_');
 			if(selectVariant.containsOption(key)) {
@@ -1362,27 +1319,27 @@ function showVariant(variant) {
 		return;
 	Group.all.forEach(element => {
 
-		if(!isBoneDefault(element.uuid)) // Skipping all bones that are variant bones.
+		if(!isBoneDefault(element.uuid)) 
 			return;
 
 		let variantVis;
 		element.children.forEach(group => {
-			if(group.type !== 'group' || isBoneDefault(group.uuid)) // Isolating children that are variant bones.
+			if(group.type !== 'group' || isBoneDefault(group.uuid)) 
 				return;
 			let vis = variantSettings.includes(group.uuid);
 			group.visibility = vis;
 			group.children.forEach(cube => {
-				if(cube.type === 'group') // Groups within variant bones are not allowed. Skipping.
+				if(cube.type === 'group') 
 					return;
 				cube.visibility = vis;
 			});
-
-			variantVis |= vis; // variant bone exists trigger.
+			
+			variantVis |= vis; 
 		});
 
-		element.visibility = !variantVis; // If a variant bone is present, hiding default bone.
+		element.visibility = !variantVis; 
 		element.children.forEach(cube => {
-			if(cube.type === 'group') // Isolating children cubes that are directly under this bone.
+			if(cube.type === 'group') 
 				return;
 			cube.visibility = !variantVis;
 		});
@@ -1407,8 +1364,8 @@ function showRenameVariantWindow() {
 	}
 
 	Blockbench.textPrompt(
-		'',
-		'New Name',
+		'', 
+		'New Name', 
 		function(text) {
 			let key = text.toLowerCase().replace(/ /g, '_');
 			if(selectVariant.containsOption(key)) {
@@ -1429,7 +1386,88 @@ function showRenameVariantWindow() {
 	);
 	$('#text_input div.dialog_handle').text('Rename Variant');
 }
+/*
+ * ModelEngine-Entity-BB-Plugin
+ * Copyright (C) 2026 ModelEngine-Entity-BB-Plugin contributors
+ * SPDX-License-Identifier: GPL-3.0-only
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ */
+var megLightEmissionAction;
 
+function getSelectedMegCubes() {
+	if (typeof Cube === 'undefined' || !Cube.selected) return [];
+	return Cube.selected.filter(cube => cube && cube.type === 'cube');
+}
+
+function openMegLightEmissionDialog(cubes) {
+	if (!cubes || !cubes.length) {
+		Blockbench.showQuickMessage('Select at least one cube first.', 2500);
+		return;
+	}
+
+	let currentValue = (typeof cubes[0].light_emission === 'number') ? cubes[0].light_emission : 0;
+
+	new Dialog({
+		id: 'meg_light_emission_dialog',
+		title: 'Light Emission',
+		form: {
+			light_emission: {
+				label: 'Light Emission',
+				type: 'number',
+				value: currentValue,
+				min: 0,
+				max: 15,
+				step: 1
+			}
+		},
+		onConfirm(formData) {
+			let value = Math.min(15, Math.max(0, Math.round(Number(formData.light_emission) || 0)));
+			Undo.initEdit({elements: cubes});
+			cubes.forEach(cube => {
+				cube.light_emission = value;
+			});
+			Undo.finishEdit('Set Light Emission');
+			Canvas.updateAll();
+			this.hide();
+		}
+	}).show();
+}
+
+function generateLightEmissionAction() {
+	megLightEmissionAction = new Action('meg_light_emission', {
+		name: 'Light Emission',
+		icon: 'lightbulb',
+		category: 'edit',
+		condition: {formats: [MEG_ENTITY_FORMAT_ID]},
+		click() {
+			openMegLightEmissionDialog(getSelectedMegCubes());
+		}
+	});
+
+	Cube.prototype.menu.addAction(megLightEmissionAction);
+}
+/*
+ * ModelEngine-Entity-BB-Plugin
+ * Copyright (C) 2026 ModelEngine-Entity-BB-Plugin contributors
+ * SPDX-License-Identifier: GPL-3.0-only
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ */
 var compileCallback = (e) => {
 	if (!isMegEntityFormat()) {
 		return;
@@ -1506,6 +1544,7 @@ var parseCallback = (e) => {
 			generateErrorAction();
 			generateVariantActions();
 			generateMegEntityActions();
+			generateLightEmissionAction();
 
 			if (Mode.selected && Mode.selected.id === 'edit' && isMegEntityFormat()) {
 				$('#left_bar').append(button);
@@ -1547,6 +1586,7 @@ var parseCallback = (e) => {
 			uninstallMegAddElementMenuAction();
 			if (megAddHitboxAction) megAddHitboxAction.delete();
 			if (megAddShadowAction) megAddShadowAction.delete();
+			if (megLightEmissionAction) megLightEmissionAction.delete();
 			if (megEntityFormat) {
 				megEntityFormat.delete();
 				megEntityFormat = null;

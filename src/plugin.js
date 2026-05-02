@@ -88,6 +88,7 @@ var parseCallback = (e) => {
 			generateErrorAction();
 			generateVariantActions();
 			generateMegEntityActions();
+			generateLightEmissionAction();
 
 			if (Mode.selected && Mode.selected.id === 'edit' && isMegEntityFormat()) {
 				$('#left_bar').append(button);
@@ -129,6 +130,7 @@ var parseCallback = (e) => {
 			uninstallMegAddElementMenuAction();
 			if (megAddHitboxAction) megAddHitboxAction.delete();
 			if (megAddShadowAction) megAddShadowAction.delete();
+			if (megLightEmissionAction) megLightEmissionAction.delete();
 			if (megEntityFormat) {
 				megEntityFormat.delete();
 				megEntityFormat = null;

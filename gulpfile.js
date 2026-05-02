@@ -13,6 +13,7 @@ gulp.task('concat', function() {
     'src/features/errorScanner.js',
     'src/features/boneOptions.js',
     'src/features/variantSelector.js',
+    'src/features/lightEmission.js',
     'src/plugin.js'
   ])
   // plugin.js *must* always go at the bottom to prevent 'called before declaration' shinanigans
