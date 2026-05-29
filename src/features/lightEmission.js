@@ -12,7 +12,34 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  */
+
+/*
+ * Light emission is stored as a cube-level property (matching Blockbench's Java item approach)
+ * via Blockbench's Property API so values persist in the .bbmodel file automatically.
+ *
+ * ModelEngine does not read light_emission from bbmodel natively — it is a runtime-only
+ * API feature (ModelBone.setBlockLight / setSkyLight). The compile callback writes a
+ * per-bone summary into e.model.light_emission_data so a server-side plugin or MythicMobs
+ * can read the bbmodel and call setBlockLight at spawn time.
+ */
+
 var megLightEmissionAction;
+var megLightEmissionProperty;
+
+function registerLightEmissionProperty() {
+	if (megLightEmissionProperty) return;
+	megLightEmissionProperty = new Property(Cube, 'number', 'light_emission', {
+		default: 0,
+		exposed: false,
+		condition: {formats: [MEG_ENTITY_FORMAT_ID]}
+	});
+}
+
+function unregisterLightEmissionProperty() {
+	if (!megLightEmissionProperty) return;
+	megLightEmissionProperty.delete();
+	megLightEmissionProperty = null;
+}
 
 function getSelectedMegCubes() {
 	if (typeof Cube === 'undefined' || !Cube.selected) return [];
@@ -32,7 +59,7 @@ function openMegLightEmissionDialog(cubes) {
 		title: 'Light Emission',
 		form: {
 			light_emission: {
-				label: 'Light Emission',
+				label: 'Light Emission (0–15)',
 				type: 'number',
 				value: currentValue,
 				min: 0,
@@ -54,6 +81,8 @@ function openMegLightEmissionDialog(cubes) {
 }
 
 function generateLightEmissionAction() {
+	registerLightEmissionProperty();
+
 	megLightEmissionAction = new Action('meg_light_emission', {
 		name: 'Light Emission',
 		icon: 'lightbulb',
@@ -65,4 +94,19 @@ function generateLightEmissionAction() {
 	});
 
 	Cube.prototype.menu.addAction(megLightEmissionAction);
+}
+
+function buildLightEmissionBoneData() {
+	let lightData = {};
+	if (typeof Outliner === 'undefined' || !Outliner.elements) return lightData;
+	Outliner.elements.forEach(cube => {
+		if (cube.type !== 'cube') return;
+		let emission = typeof cube.light_emission === 'number' ? cube.light_emission : 0;
+		if (emission <= 0) return;
+		let bone = (cube.parent && typeof cube.parent === 'object') ? cube.parent : null;
+		if (!bone || typeof bone.name !== 'string') return;
+		let existing = lightData[bone.name] || 0;
+		lightData[bone.name] = Math.max(existing, emission);
+	});
+	return lightData;
 }

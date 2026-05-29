@@ -20,6 +20,7 @@ var compileCallback = (e) => {
 	e.model.bone_option = boneOptions;
 	e.model.variant = variantBones;
 	e.model.meg_settings = megProjectSettings;
+	e.model.light_emission_data = buildLightEmissionBoneData();
 };
 
 var parseCallback = (e) => {
@@ -131,6 +132,7 @@ var parseCallback = (e) => {
 			if (megAddHitboxAction) megAddHitboxAction.delete();
 			if (megAddShadowAction) megAddShadowAction.delete();
 			if (megLightEmissionAction) megLightEmissionAction.delete();
+			unregisterLightEmissionProperty();
 			if (megEntityFormat) {
 				megEntityFormat.delete();
 				megEntityFormat = null;
