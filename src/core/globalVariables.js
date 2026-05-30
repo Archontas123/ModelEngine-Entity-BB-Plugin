@@ -143,6 +143,7 @@ function registerMegEntityFormat() {
 		bone_rig: true,
 		centered_grid: true,
 		rotate_cubes: true,
+		rotation_snap: true,
 		per_texture_uv_size: true,
 		texture_folder: true,
 		texture_mcmeta: true,
