@@ -72,7 +72,7 @@ var parseCallback = (e) => {
 		author: 'Archontas',
 		icon: 'smart_toy',
 		description: 'A ModelEngine addon for Blockbench',
-		version: '0.1.0',
+		version: '0.3.0',
 		variant: 'both',
 		await_loading: true,
 		onload() {
